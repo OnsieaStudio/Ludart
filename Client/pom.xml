@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -18,14 +18,24 @@
 		<maven.compiler.source>20</maven.compiler.source>
 		<maven.compiler.target>20</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<lwjgl.version>3.3.3-SNAPSHOT</lwjgl.version>
+		<joml.version>1.10.5</joml.version>
+		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
+		<steamworks4j.version>1.9.0</steamworks4j.version>
+		<steamworks4j-server.version>1.9.0</steamworks4j-server.version>
+		<lwjgl.natives>natives-windows</lwjgl.natives>
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>sonatype-snapshots</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-			<releases><enabled>false</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
@@ -196,6 +206,10 @@
 			<artifactId>steamworks4j-server</artifactId>
 			<version>${steamworks4j-server.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>fr.onsiea.ludart</groupId>
+			<artifactId>common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
-
 </project>
