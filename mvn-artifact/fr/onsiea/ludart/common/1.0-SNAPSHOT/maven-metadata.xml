@@ -3,27 +3,27 @@
   <groupId>fr.onsiea.ludart</groupId>
   <artifactId>common</artifactId>
   <versioning>
-    <lastUpdated>20230925123105</lastUpdated>
+    <lastUpdated>20230925123359</lastUpdated>
     <snapshot>
-      <timestamp>20230925.123105</timestamp>
-      <buildNumber>1</buildNumber>
+      <timestamp>20230925.123359</timestamp>
+      <buildNumber>2</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.0-20230925.123105-1</value>
-        <updated>20230925123105</updated>
+        <value>1.0-20230925.123359-2</value>
+        <updated>20230925123359</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.0-20230925.123105-1</value>
-        <updated>20230925123105</updated>
+        <value>1.0-20230925.123359-2</value>
+        <updated>20230925123359</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
-        <value>1.0-20230925.123105-1</value>
-        <updated>20230925123105</updated>
+        <value>1.0-20230925.123359-2</value>
+        <updated>20230925123359</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
