@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>fr.onsiea</groupId>
+  <artifactId>ludart</artifactId>
+  <versioning>
+    <lastUpdated>20230925111946</lastUpdated>
+    <snapshot>
+      <timestamp>20230925.111946</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>1.0-20230925.111946-1</value>
+        <updated>20230925111946</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+  <version>1.0-SNAPSHOT</version>
+</metadata>
