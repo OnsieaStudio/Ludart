@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.onsiea</groupId>
+		<artifactId>ludart</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>fr.onsiea.ludart</groupId>
+	<artifactId>game</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>Game</name>
+	<url>https://github.com/OnsieaStudio/Ludart</url>
+	<description>Game logics module package (chunks, entities logics, world) of Ludart (2D-3D video game modular framework. Use LWJGL library)</description>
+	<inceptionYear>2023</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</name>
+			<url>https://opensource.org/license/gpl-3-0/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>OnsieaStudio</name>
+		<url>https://github.com/OnsieaStudio/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Seynax</name>
+			<id>seynax</id>
+			<email>seynax@onsiea.com</email>
+			<timezone>+2</timezone>
+			<organization>OnsieaStudio</organization>
+			<organizationUrl>https://github.com/OnsieaStudio/</organizationUrl>
+			<roles>
+				<role>IT project manager</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<url>https://github.com/OnsieaStudio/Ludart/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
+
+	<properties>
+		<maven.compiler.source>20</maven.compiler.source>
+		<maven.compiler.target>20</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.onsiea.ludart</groupId>
+			<artifactId>common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
