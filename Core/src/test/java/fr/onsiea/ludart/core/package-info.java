@@ -1,1 +1,0 @@
-package fr.onsiea.ludart.core;
