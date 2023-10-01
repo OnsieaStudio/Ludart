@@ -33,7 +33,7 @@
 package fr.onsiea.ludart.common;
 
 import fr.onsiea.ludart.common.modules.IModule;
-import fr.onsiea.ludart.common.modules.LudartModule;
+import fr.onsiea.ludart.common.modules.processor.LudartModule;
 import fr.onsiea.ludart.common.modules.ModuleBase;
 import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
 import fr.onsiea.ludart.common.modules.schema.instanced.ModulesPositionedSchemas;

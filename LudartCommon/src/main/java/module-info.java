@@ -13,4 +13,5 @@ module fr.onsiea.ludart.common
 	exports fr.onsiea.ludart.common.registries;
 	exports fr.onsiea.ludart.common.registries.manager;
 	exports fr.onsiea.ludart.common.registry;
+	exports fr.onsiea.ludart.common.modules.processor;
 }

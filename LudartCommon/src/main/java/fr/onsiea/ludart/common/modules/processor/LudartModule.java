@@ -31,7 +31,7 @@
  *  @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common.modules;
+package fr.onsiea.ludart.common.modules.processor;
 
 public @interface LudartModule
 {
