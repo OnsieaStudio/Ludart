@@ -1,3 +1,3 @@
-module manager
+module fr.onsiea.ludart.manager
 {
 }

@@ -1,2 +1,3 @@
-module common {
+module fr.onsiea.ludart.common
+{
 }

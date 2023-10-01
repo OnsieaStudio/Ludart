@@ -1,2 +1,3 @@
-module core {
+module fr.onsiea.ludart.core
+{
 }

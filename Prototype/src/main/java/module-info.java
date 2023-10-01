@@ -1,3 +1,3 @@
-module prototype
+module fr.onsiea.ludart.prototype
 {
 }

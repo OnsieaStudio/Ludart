@@ -1,2 +1,3 @@
-module game {
+module fr.onsiea.ludart.game
+{
 }
