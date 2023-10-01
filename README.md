@@ -2,7 +2,11 @@
 
 2D-3D video game framework composed of pre-existing modules themselves based on the LWJGL (which includes OpenGL, Vulkan, NanoVG, OpenAL, GLFW, STB...). They will manage a whole bunch of domains (windowing, rendering, physics, entities, data, networks, game logic etc)
 
-**Startup in progress, the initial sources will arrive and updates will be regular. For now I'm focusing on the architecture (repo, documentations, maven, gradle, ...)**
+**In progress, the initial sources will arrive and updates will be regular. For now I'm focusing on the architecture (repo, documentations, maven, gradle, ...)**
+
+# License
+
+This project is released under the GNU General Public License (GPL) version 3, available at https://www.gnu.org/licenses/gpl-3.0.html and copied into https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE, for more details read https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE
 
 ## Contraints
 
