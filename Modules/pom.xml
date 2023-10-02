@@ -43,13 +43,12 @@
     </parent>
 
     <groupId>fr.onsiea.ludart</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>modules</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Core</name>
+    <packaging>pom</packaging>
+    <name>Modules</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
-    <description>Core module package (physics, entities, network ...) of Ludart (2D-3D video game modular framework. Use
-        LWJGL library)
-    </description>
+    <description>Parent of all modules of Ludart (2D-3D video game modular framework)</description>
     <inceptionYear>2023</inceptionYear>
 
     <licenses>
@@ -85,11 +84,37 @@
         <system>GitHub</system>
     </issueManagement>
 
+    <modules>
+        <module>All</module>
+        <module>Minimal</module>
+        <module>Recommended</module>
+        <module>ModulesManager</module>
+        <module>Game</module>
+        <module>Core</module>
+        <module>Client</module>
+        <module>Prototype</module>
+    </modules>
+
     <properties>
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>ludart</id>
+            <url>https://raw.githubusercontent.com/OnsieaStudio/Ludart/maven/mvn-artifact</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -98,4 +123,38 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <annotationProcessorPath>
+                                <groupId>fr.onsiea.ludart.modules</groupId>
+                                <artifactId>processor</artifactId>
+                                <version>1.0-SNAPSHOT</version>
+                            </annotationProcessorPath>
+                        </annotationProcessorPaths>
+                        <annotationProcessors>
+                            <annotationProcessor>
+                                fr.onsiea.ludart.processor.ModuleProcessor
+                            </annotationProcessor>
+                        </annotationProcessors>
+                        <proc>both</proc>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>fr.onsiea.ludart.modules</groupId>
+                            <artifactId>processor</artifactId>
+                            <version>1.0-SNAPSHOT</version>
+                            <optional>true</optional>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

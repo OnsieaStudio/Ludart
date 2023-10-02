@@ -36,18 +36,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>fr.onsiea</groupId>
-        <artifactId>ludart</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <groupId>fr.onsiea.ludart</groupId>
-    <artifactId>common</artifactId>
+    <groupId>fr.onsiea.ludart.modules</groupId>
+    <artifactId>minimal</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>LudartCommon</name>
+    <packaging>pom</packaging>
+    <name>Minimal</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
-    <description>Common sources between all modules of Ludart (2D-3D video game modular framework. Use LWJGL library)
+    <description>pom "minimal" configuration
+        to directly add the recommended minimum number of modules packages as dependencies from Ludart (2D-3D video-game modular framework),
+        that's to say : modules manager, core and client.
     </description>
     <inceptionYear>2023</inceptionYear>
 
@@ -88,20 +85,36 @@
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ludart-client-version>1.0-SNAPSHOT</ludart-client-version>
+        <ludart-core-version>1.0-SNAPSHOT</ludart-core-version>
+        <ludart-manager-version>1.0-SNAPSHOT</ludart-manager-version>
     </properties>
 
     <repositories>
         <repository>
             <id>ludart</id>
             <url>https://raw.githubusercontent.com/OnsieaStudio/Ludart/maven/mvn-artifact</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
         </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>client</artifactId>
+            <version>${ludart-client-version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>core</artifactId>
+            <version>${ludart-core-version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>manager</artifactId>
+            <version>${ludart-manager-version}</version>
+            <optional>false</optional>
+        </dependency>
+    </dependencies>
 </project>

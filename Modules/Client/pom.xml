@@ -37,19 +37,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>fr.onsiea</groupId>
-        <artifactId>ludart</artifactId>
+        <groupId>fr.onsiea.ludart</groupId>
+        <artifactId>modules</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>fr.onsiea.ludart</groupId>
-    <artifactId>prototype</artifactId>
+    <artifactId>client</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <name>Prototype</name>
+    <name>Client</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
-    <description>Prototype module package (concepts prototypes to test ida quickly ...) of Ludart (2D-3D video game
-        modular framework. Use LWJGL library)
+    <description>Client module package (window, user input and outputs, render, resources ...) of Ludart (2D-3D video-game modular framework. Use LWJGL library)
     </description>
     <inceptionYear>2023</inceptionYear>
 
@@ -108,6 +106,18 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>ludart</id>
+            <url>https://raw.githubusercontent.com/OnsieaStudio/Ludart/maven/mvn-artifact</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
         </repository>
     </repositories>
 
@@ -277,11 +287,6 @@
             <groupId>com.code-disaster.steamworks4j</groupId>
             <artifactId>steamworks4j-server</artifactId>
             <version>${steamworks4j-server.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.onsiea.ludart</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

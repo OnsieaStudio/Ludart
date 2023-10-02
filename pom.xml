@@ -86,12 +86,8 @@
 
     <modules>
         <module>LudartCommon</module>
-        <module>Manager</module>
-        <module>Game</module>
-        <module>Core</module>
-        <module>Client</module>
-        <module>Prototype</module>
         <module>ModulesProcessor</module>
+        <module>Modules</module>
     </modules>
 
     <properties>
@@ -122,7 +118,7 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
             <releases>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
             </releases>
         </repository>
@@ -134,7 +130,7 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
             <releases>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
             </releases>
         </repository>
@@ -155,6 +151,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok-version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

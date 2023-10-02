@@ -36,19 +36,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>fr.onsiea</groupId>
-        <artifactId>ludart</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <groupId>fr.onsiea.ludart</groupId>
-    <artifactId>game</artifactId>
+    <groupId>fr.onsiea.ludart.modules</groupId>
+    <artifactId>all</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Game</name>
+    <packaging>pom</packaging>
+    <name>All</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
-    <description>Game logics module package (chunks, entities logics, world) of Ludart (2D-3D video game modular
-        framework. Use LWJGL library)
+    <description>pom "all" configuration
+        to directly add all modules packages as dependencies from Ludart (2D-3D video game modular framework. Use LWJGL
+        library),
+        that's to say : modules manager, game logics, core, client and prototype system.
     </description>
     <inceptionYear>2023</inceptionYear>
 
@@ -89,13 +86,50 @@
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ludart-client-version>1.0-SNAPSHOT</ludart-client-version>
+        <ludart-core-version>1.0-SNAPSHOT</ludart-core-version>
+        <ludart-game-version>1.0-SNAPSHOT</ludart-game-version>
+        <ludart-manager-version>1.0-SNAPSHOT</ludart-manager-version>
+        <ludart-prototype-version>1.0-SNAPSHOT</ludart-prototype-version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>ludart</id>
+            <url>https://raw.githubusercontent.com/OnsieaStudio/Ludart/maven/mvn-artifact</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
             <groupId>fr.onsiea.ludart</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>client</artifactId>
+            <version>${ludart-client-version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>core</artifactId>
+            <version>${ludart-core-version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>game</artifactId>
+            <version>${ludart-game-version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>manager</artifactId>
+            <version>${ludart-manager-version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>fr.onsiea.ludart</groupId>
+            <artifactId>prototype</artifactId>
+            <version>${ludart-prototype-version}</version>
+            <optional>false</optional>
         </dependency>
     </dependencies>
 </project>
