@@ -30,9 +30,22 @@
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common.modules;
+package fr.onsiea.ludart.common.tests;
 
-public enum EnumPosition
+public class ModulesProcessorTest
 {
-	BEGIN, MIDDLE, END
+	public static void main(String[] args)
+	{
+		Class<?> clazz = null;
+		try
+		{
+			clazz = Class.forName("fr.onsiea.ludart.client.ClientTest");
+
+			System.out.println("Clazz : " + clazz);
+		}
+		catch (ClassNotFoundException eIn)
+		{
+			throw new RuntimeException(eIn);
+		}
+	}
 }

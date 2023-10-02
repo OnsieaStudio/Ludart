@@ -1,27 +1,32 @@
-/**
- * Copyright 2021-2023 Onsiea Studio All rights reserved.<br>
- * <br>
+/*
+ * Copyright 2021-2023 Onsiea Studio some rights reserved.
  *
- * This file is part of Onsiea Engine project. (https://github.com/OnsieaStudio/OnsieaEngine)<br>
- * <br>
+ * This file is part of Ludart Game Framework project developed by Onsiea Studio.
+ * (https://github.com/OnsieaStudio/Ludart)
  *
- * Onsiea Engine is [licensed] (https://github.com/OnsieaStudio/OnsieaEngine/blob/main/LICENSE) under the terms of the "GNU General Public Lesser License v2.1" (LGPL-2.1). https://github.com/OnsieaStudio/OnsieaEngine/wiki/License#license-and-copyright<br>
- * <br>
+ * Ludart is [licensed]
+ * (https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE) under the terms of
+ * the "GNU General Public License v3.0" (GPL-3.0).
+ * https://github.com/OnsieaStudio/Ludart/wiki/License#license-and-copyright
  *
- * Onsiea Engine is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or (at your option) any later version.<br>
- * <br>
+ * Ludart is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3.0 of the License, or
+ * (at your option) any later version.
  *
- * Onsiea Engine is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.<br>
- * <br>
+ * Ludart is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Onsiea Engine. If not, see <https://www.gnu.org/licenses/>.<br>
- * <br>
+ * You should have received a copy of the GNU General Public License
+ * along with Ludart. If not, see <https://www.gnu.org/licenses/>.
  *
- * Neither the name "Onsiea Studio", "Onsiea Engine", or any derivative name or the names of its authors / contributors may be used to endorse or promote products derived from this software and even less to name another project or other work without clear and precise
- * permissions written in advance.<br>
- * <br>
+ * Any reproduction or alteration of this project may reference it and utilize its name and derivatives, provided it clearly states its modification status and includes a link to the original repository. Usage of all names belonging to authors, developers, and contributors remains subject to copyright.
+ * in other cases prior written authorization is required for using names such as "Onsiea," "Ludart," or any names derived from authors, developers, or contributors for product endorsements or promotional purposes.
  *
- * @Author : Seynax (https://github.com/seynax)<br>
+ *
+ * @Author : Seynax (https://github.com/seynax)
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 package fr.onsiea.ludart.common.registries;

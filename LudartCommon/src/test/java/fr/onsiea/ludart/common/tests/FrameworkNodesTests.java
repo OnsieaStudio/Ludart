@@ -29,10 +29,50 @@
  * @Author : Seynax (https://github.com/seynax)
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
+package fr.onsiea.ludart.common.tests;
 
-package fr.onsiea.ludart.common.modules;
+import fr.onsiea.ludart.common.MapBatch;
+import fr.onsiea.ludart.common.modules.settings.ModuleSettings;
+import fr.onsiea.ludart.common.registry.FunctionsFlux;
+import fr.onsiea.tools.logger.Loggers;
 
-public enum EnumPosition
+/**
+ * @author Seynax
+ */
+public class FrameworkNodesTests
 {
-	BEGIN, MIDDLE, END
+	// Settings
+	private final static ModuleSettings SETTINGS = ModuleSettings.defaults(); // Without modification, configured on
+	// DEFAULTS SETTINGS from ModuleSettingsClient
+	public final static  Loggers        LOGGERS  = FrameworkNodesTests.SETTINGS.loggers();
+
+	/**
+	 * @author Seynax
+	 */
+	public static void main(final String[] args)
+	{
+		FrameworkNodesTests.LOGGERS.logLn("ENGINE-FRAMEWORK_TESTS : HELLO WORLD !");
+
+		MapBatch<String, FunctionsFlux> root = new MapBatch<>((keyIn) -> new FunctionsFlux());
+		show(root);
+		root.batch("a");
+		root.batch("b");
+		root.batch("c");
+		show(root);
+		LOGGERS.logLn(root.remove("b"));
+		show(root);
+		LOGGERS.logLn(root.remove("f"));
+		show(root);
+	}
+
+	public static void show(MapBatch<String, FunctionsFlux> rootIn)
+	{
+		StringBuilder toShow = new StringBuilder((rootIn.first() != null ? "first : " + rootIn.first() + ", " : "") + (rootIn.last() != null ? "last : " + rootIn.last() + ", " : "") + (rootIn.size() > 0 ? "[" + rootIn.size() + "]\r\n{\r\n" : "- [0]"));
+		if (rootIn.size() > 0)
+		{
+			rootIn.each((nodeIn) -> toShow.append("\t").append("\r\n"));
+			toShow.append("}");
+		}
+		LOGGERS.logLn(toShow);
+	}
 }

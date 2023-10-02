@@ -1,3 +1,35 @@
+/*
+ * Copyright 2021-2023 Onsiea Studio some rights reserved.
+ *
+ * This file is part of Ludart Game Framework project developed by Onsiea Studio.
+ * (https://github.com/OnsieaStudio/Ludart)
+ *
+ * Ludart is [licensed]
+ * (https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE) under the terms of
+ * the "GNU General Public License v3.0" (GPL-3.0).
+ * https://github.com/OnsieaStudio/Ludart/wiki/License#license-and-copyright
+ *
+ * Ludart is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3.0 of the License, or
+ * (at your option) any later version.
+ *
+ * Ludart is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Ludart. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Any reproduction or alteration of this project may reference it and utilize its name and derivatives, provided it clearly states its modification status and includes a link to the original repository. Usage of all names belonging to authors, developers, and contributors remains subject to copyright.
+ * in other cases prior written authorization is required for using names such as "Onsiea," "Ludart," or any names derived from authors, developers, or contributors for product endorsements or promotional purposes.
+ *
+ *
+ * @Author : Seynax (https://github.com/seynax)
+ * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
+ */
+
 package fr.onsiea.ludart.common.modules.nodes;
 
 import fr.onsiea.tools.utils.function.IIFunction;
@@ -106,12 +138,12 @@ public class NodeComponents
 
 	public static class Customizable<K, V>
 	{
-		private final Nodes<K, V> root;
+		private final Nodes<K, V>                   root;
 		private final Map<String, IComponent<K, V>> components;
 
 		public Customizable(Nodes<K, V> nodesIn)
 		{
-			this.root = nodesIn;
+			this.root       = nodesIn;
 			this.components = new LinkedHashMap<>();
 		}
 
@@ -140,7 +172,7 @@ public class NodeComponents
 
 		public Customizable<K, V> add(@NonNull Class<IComponent<K, V>> componentClassIn) throws Exception
 		{
-			@NonNull var name = componentClassIn.getName();
+			@NonNull var name        = componentClassIn.getName();
 			@NonNull var constructor = componentClassIn.getConstructor(Nodes.class);
 
 			constructor.newInstance(this.root);
@@ -171,12 +203,12 @@ public class NodeComponents
 	public final static class Remove<K, V, G, P> implements IRemove<P, G>, IComponent<K, V>
 	{
 		private final IOIFunction<Node<K, V>, G> getFunction;
-		private final P parent;
+		private final P                          parent;
 
 		public Remove(IOIFunction<Node<K, V>, G> getFunctionIn, P parentIn)
 		{
 			this.getFunction = getFunctionIn;
-			this.parent = parentIn;
+			this.parent      = parentIn;
 		}
 
 		public static <K, V, G, P> Remove<K, V, G, P> make(IOIFunction<Node<K, V>, G> getterIn, P parentIn)
@@ -245,12 +277,12 @@ public class NodeComponents
 	public final static class Batch<K, V, G> implements IBatch<K, V, G>
 	{
 		private final IOIFunction<Node<K, V>, G> getFunction;
-		private final IAdd<K, V> adder;
+		private final IAdd<K, V>                 adder;
 
 		public Batch(IOIFunction<Node<K, V>, G> getFunctionIn, IAdd<K, V> addFunctionIn)
 		{
 			this.getFunction = getFunctionIn;
-			this.adder = addFunctionIn;
+			this.adder       = addFunctionIn;
 		}
 
 		public static <K, V, G> Batch<K, V, G> make(IOIFunction<Node<K, V>, G> getterIn, IAdd<K, V> adderIn)
@@ -287,7 +319,7 @@ public class NodeComponents
 			{
 				return node;
 			}
-			var key = keyInitializerIn.execute(toGetIn);
+			var key   = keyInitializerIn.execute(toGetIn);
 			var value = valueInitializerIn.execute(key);
 
 			return this.adder.add(key, value);
@@ -296,15 +328,15 @@ public class NodeComponents
 		public static class CommonInitializer<K, V, G> implements IBatchCommonInitializer<K, V, G>
 		{
 			private final IOIFunction<Node<K, V>, G> getFunction;
-			private final IAdd<K, V> addFunction;
-			private final IOIFunction<K, G> keyInitializer;
-			private final IOIFunction<V, K> valueInitializer;
+			private final IAdd<K, V>                 addFunction;
+			private final IOIFunction<K, G>          keyInitializer;
+			private final IOIFunction<V, K>          valueInitializer;
 
 			public CommonInitializer(IOIFunction<Node<K, V>, G> getFunctionIn, IAdd<K, V> addFunctionIn, IOIFunction<K, G> keyInitializerIn, IOIFunction<V, K> valueInitializerIn)
 			{
-				this.getFunction = getFunctionIn;
-				this.addFunction = addFunctionIn;
-				this.keyInitializer = keyInitializerIn;
+				this.getFunction      = getFunctionIn;
+				this.addFunction      = addFunctionIn;
+				this.keyInitializer   = keyInitializerIn;
 				this.valueInitializer = valueInitializerIn;
 			}
 
@@ -341,7 +373,7 @@ public class NodeComponents
 					return found;
 				}
 
-				var key = this.keyInitializer.execute(toGetIn);
+				var key   = this.keyInitializer.execute(toGetIn);
 				var value = this.valueInitializer.execute(key);
 
 				return this.addFunction.add(key, value);
@@ -352,11 +384,11 @@ public class NodeComponents
 	public final static class BatchRelative<K, V, G, R> implements IBatchRelative<K, V, G, R>
 	{
 		private final IOIFunction<Node<K, V>, G> getFunction;
-		private final IAddRelative<K, V, R> placeFunction;
+		private final IAddRelative<K, V, R>      placeFunction;
 
 		public BatchRelative(IOIFunction<Node<K, V>, G> getFunctionIn, IAddRelative<K, V, R> placeFunction)
 		{
-			this.getFunction = getFunctionIn;
+			this.getFunction   = getFunctionIn;
 			this.placeFunction = placeFunction;
 		}
 
@@ -393,7 +425,7 @@ public class NodeComponents
 			{
 				return node;
 			}
-			var key = keyInitializerIn.execute(toGetIn);
+			var key   = keyInitializerIn.execute(toGetIn);
 			var value = valueInitializerIn.execute(key);
 
 			return this.placeFunction.after(beforeIn, key, value);
@@ -407,7 +439,7 @@ public class NodeComponents
 			{
 				return node;
 			}
-			var key = keyInitializerIn.execute(toGetIn);
+			var key   = keyInitializerIn.execute(toGetIn);
 			var value = valueInitializerIn.execute(key);
 
 			return this.placeFunction.before(beforeIn, key, value);
@@ -416,15 +448,15 @@ public class NodeComponents
 		public static class CommonInitializer<K, V, G, R> implements IBatchRelativeCommonInitializer<K, V, G, R>
 		{
 			private final IOIFunction<Node<K, V>, G> getFunction;
-			private final IAddRelative<K, V, R> placeFunction;
-			private final IOIFunction<K, G> keyInitializer;
-			private final IOIFunction<V, K> valueInitializer;
+			private final IAddRelative<K, V, R>      placeFunction;
+			private final IOIFunction<K, G>          keyInitializer;
+			private final IOIFunction<V, K>          valueInitializer;
 
 			public CommonInitializer(IOIFunction<Node<K, V>, G> getFunctionIn, IAddRelative<K, V, R> placeFunctionIn, IOIFunction<K, G> keyInitializerIn, IOIFunction<V, K> valueInitializerIn)
 			{
-				this.getFunction = getFunctionIn;
-				this.placeFunction = placeFunctionIn;
-				this.keyInitializer = keyInitializerIn;
+				this.getFunction      = getFunctionIn;
+				this.placeFunction    = placeFunctionIn;
+				this.keyInitializer   = keyInitializerIn;
 				this.valueInitializer = valueInitializerIn;
 			}
 
@@ -462,7 +494,7 @@ public class NodeComponents
 				{
 					return node;
 				}
-				var key = this.keyInitializer.execute(toGetIn);
+				var key   = this.keyInitializer.execute(toGetIn);
 				var value = this.valueInitializer.execute(key);
 
 				return this.placeFunction.after(beforeIn, key, value);
@@ -476,7 +508,7 @@ public class NodeComponents
 				{
 					return node;
 				}
-				var key = this.keyInitializer.execute(toGetIn);
+				var key   = this.keyInitializer.execute(toGetIn);
 				var value = this.valueInitializer.execute(key);
 
 				return this.placeFunction.before(beforeIn, key, value);
@@ -487,7 +519,7 @@ public class NodeComponents
 	public final static class BatchPosition<K, V, G> implements IBatchPosition<K, V, G>
 	{
 		private final IOIFunction<Node<K, V>, G> getFunction;
-		private final IAddPosition<K, V> addFunction;
+		private final IAddPosition<K, V>         addFunction;
 
 		public BatchPosition(IOIFunction<Node<K, V>, G> getFunctionIn, IAddPosition<K, V> addFunctionIn)
 		{
@@ -528,7 +560,7 @@ public class NodeComponents
 			{
 				return node;
 			}
-			var key = keyInitializerIn.execute(toGetIn);
+			var key   = keyInitializerIn.execute(toGetIn);
 			var value = valueInitializerIn.execute(key);
 
 			return this.addFunction.begin(key, value);
@@ -542,7 +574,7 @@ public class NodeComponents
 			{
 				return node;
 			}
-			var key = keyInitializerIn.execute(toGetIn);
+			var key   = keyInitializerIn.execute(toGetIn);
 			var value = valueInitializerIn.execute(key);
 
 			return this.addFunction.middle(key, value);
@@ -556,7 +588,7 @@ public class NodeComponents
 			{
 				return node;
 			}
-			var key = keyInitializerIn.execute(toGetIn);
+			var key   = keyInitializerIn.execute(toGetIn);
 			var value = valueInitializerIn.execute(key);
 
 			return this.addFunction.end(key, value);
@@ -565,15 +597,15 @@ public class NodeComponents
 		public static class CommonInitializer<K, V, G> implements IBatchPositionCommonInitializer<K, V, G>
 		{
 			private final IOIFunction<Node<K, V>, G> getFunction;
-			private final IAddPosition<K, V> addFunction;
-			private final IOIFunction<K, G> keyInitializer;
-			private final IOIFunction<V, K> valueInitializer;
+			private final IAddPosition<K, V>         addFunction;
+			private final IOIFunction<K, G>          keyInitializer;
+			private final IOIFunction<V, K>          valueInitializer;
 
 			public CommonInitializer(IOIFunction<Node<K, V>, G> getFunctionIn, IAddPosition<K, V> addFunctionIn, IOIFunction<K, G> keyInitializerIn, IOIFunction<V, K> valueInitializerIn)
 			{
-				this.getFunction = getFunctionIn;
-				this.addFunction = addFunctionIn;
-				this.keyInitializer = keyInitializerIn;
+				this.getFunction      = getFunctionIn;
+				this.addFunction      = addFunctionIn;
+				this.keyInitializer   = keyInitializerIn;
 				this.valueInitializer = valueInitializerIn;
 			}
 
@@ -611,7 +643,7 @@ public class NodeComponents
 				{
 					return node;
 				}
-				var key = this.keyInitializer.execute(toGetIn);
+				var key   = this.keyInitializer.execute(toGetIn);
 				var value = this.valueInitializer.execute(key);
 
 				return this.addFunction.begin(key, value);
@@ -625,7 +657,7 @@ public class NodeComponents
 				{
 					return node;
 				}
-				var key = this.keyInitializer.execute(toGetIn);
+				var key   = this.keyInitializer.execute(toGetIn);
 				var value = this.valueInitializer.execute(key);
 
 				return this.addFunction.middle(key, value);
@@ -639,7 +671,7 @@ public class NodeComponents
 				{
 					return node;
 				}
-				var key = this.keyInitializer.execute(toGetIn);
+				var key   = this.keyInitializer.execute(toGetIn);
 				var value = this.valueInitializer.execute(key);
 
 				return this.addFunction.end(key, value);
@@ -649,12 +681,12 @@ public class NodeComponents
 
 	public static class Place<K, V, G> implements IAddRelative<K, V, G>
 	{
-		private final Nodes<K, V> root;
+		private final Nodes<K, V>   root;
 		private final IGet<K, V, G> getFunction;
 
 		public Place(Nodes<K, V> rootIn, IGet<K, V, G> getFunctionIn)
 		{
-			this.root = rootIn;
+			this.root        = rootIn;
 			this.getFunction = getFunctionIn;
 		}
 
@@ -760,7 +792,7 @@ public class NodeComponents
 				public Node<K, V> ofReverse(int indexIn, int lastIndexIn)
 				{
 					var current = this.root.last();
-					int index = lastIndexIn;
+					int index   = lastIndexIn;
 					while (current != null)
 					{
 						if (index == indexIn)
@@ -785,7 +817,7 @@ public class NodeComponents
 					}
 
 					var current = this.root.first();
-					int index = 0;
+					int index   = 0;
 					while (current != null)
 					{
 						if (index == toGetIn)
@@ -875,12 +907,12 @@ public class NodeComponents
 
 	public final static class MiddleGet<K, V> implements IComponent<K, V>
 	{
-		private final Nodes<K, V> root;
+		private final Nodes<K, V>         root;
 		private final IGet<K, V, Integer> indexGet;
 
 		public MiddleGet(final Nodes<K, V> rootIn, IGet<K, V, Integer> indexGetIn)
 		{
-			this.root = rootIn;
+			this.root     = rootIn;
 			this.indexGet = indexGetIn;
 		}
 

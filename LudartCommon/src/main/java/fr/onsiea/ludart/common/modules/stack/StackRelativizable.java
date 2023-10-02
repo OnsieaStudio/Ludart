@@ -1,35 +1,32 @@
-/**
- * Copyright 2021-2023 Onsiea Studio All rights reserved.<br>
- * <br>
+/*
+ * Copyright 2021-2023 Onsiea Studio some rights reserved.
  *
- * This file is part of Onsiea Engine project. (https://github.com/OnsieaStudio/OnsieaEngine)<br>
- * <br>
+ * This file is part of Ludart Game Framework project developed by Onsiea Studio.
+ * (https://github.com/OnsieaStudio/Ludart)
  *
- * Onsiea Engine is [licensed] (https://github.com/OnsieaStudio/OnsieaEngine/blob/main/LICENSE) under the terms of the
- * "GNU General Public Lesser License v2.1" (LGPL-2.1).
- * https://github.com/OnsieaStudio/OnsieaEngine/wiki/License#license-and-copyright<br>
- * <br>
+ * Ludart is [licensed]
+ * (https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE) under the terms of
+ * the "GNU General Public License v3.0" (GPL-3.0).
+ * https://github.com/OnsieaStudio/Ludart/wiki/License#license-and-copyright
  *
- * Onsiea Engine is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation, either version 2.1 of the License, or (at your option)
- * any later version.<br>
- * <br>
+ * Ludart is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3.0 of the License, or
+ * (at your option) any later version.
  *
- * Onsiea Engine is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.<br>
- * <br>
+ * Ludart is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Onsiea Engine. If not, see
- * <https://www.gnu.org/licenses/>.<br>
- * <br>
+ * You should have received a copy of the GNU General Public License
+ * along with Ludart. If not, see <https://www.gnu.org/licenses/>.
  *
- * Neither the name "Onsiea Studio", "Onsiea Engine", or any derivative name or the names of its authors / contributors
- * may be used to endorse or promote products derived from this software and even less to name another project or other
- * work without clear and precise permissions written in advance.<br>
- * <br>
+ * Any reproduction or alteration of this project may reference it and utilize its name and derivatives, provided it clearly states its modification status and includes a link to the original repository. Usage of all names belonging to authors, developers, and contributors remains subject to copyright.
+ * in other cases prior written authorization is required for using names such as "Onsiea," "Ludart," or any names derived from authors, developers, or contributors for product endorsements or promotional purposes.
  *
- * @Author : Seynax (https://github.com/seynax)<br>
+ *
+ * @Author : Seynax (https://github.com/seynax)
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 package fr.onsiea.ludart.common.modules.stack;
@@ -45,10 +42,22 @@ import java.util.Stack;
 public interface StackRelativizable<T>
 {
 	/**
-	 * @return all childs modules
+	 * add childModuleIn module according to the placement defined by the enum placementIn
+	 *
+	 * @return current module instance
 	 * @author Seynax
 	 */
-	Stack<T> childs();
+	default StackRelativizable<T> add(final EnumPosition positionIn, final T childModuleIn)
+	{
+		switch (positionIn)
+		{
+			case BEGIN -> this.atBegin(childModuleIn);
+			case MIDDLE -> this.inMiddle(childModuleIn);
+			default -> this.atEnd(childModuleIn);
+		}
+
+		return this;
+	}
 
 	/**
 	 * add childModuleIn module at the start of the flux
@@ -59,6 +68,57 @@ public interface StackRelativizable<T>
 	default StackRelativizable<T> atBegin(final T childModuleIn)
 	{
 		this.childs().add(0, childModuleIn);
+
+		return this;
+	}
+
+	/**
+	 * add childModuleIn module in the middle of the flux
+	 *
+	 * @return current module instance
+	 * @author Seynax
+	 */
+	default StackRelativizable<T> inMiddle(final T childModuleIn)
+	{
+		this.childs().add(this.childs().size() / 2, childModuleIn);
+
+		return this;
+	}
+
+	/**
+	 * add childModuleIn module at the end of the flux
+	 *
+	 * @return current module instance
+	 * @author Seynax
+	 */
+	default StackRelativizable<T> atEnd(final T childModuleIn)
+	{
+		this.childs().add(childModuleIn);
+
+		return this;
+	}
+
+	/**
+	 * @return all childs modules
+	 * @author Seynax
+	 */
+	Stack<T> childs();
+
+	/**
+	 * add all modules from childsModulesIn according to the placement defined by the enum placementIn
+	 *
+	 * @return current module instance
+	 * @author Seynax
+	 */
+	@SuppressWarnings("unchecked")
+	default StackRelativizable<T> addAll(final EnumPosition positionIn, final T... childsModulesIn)
+	{
+		switch (positionIn)
+		{
+			case BEGIN -> this.atBeginAll(childsModulesIn);
+			case MIDDLE -> this.inMiddleAll(childsModulesIn);
+			default -> this.atEndAll(childsModulesIn);
+		}
 
 		return this;
 	}
@@ -83,19 +143,6 @@ public interface StackRelativizable<T>
 	}
 
 	/**
-	 * add childModuleIn module in the middle of the flux
-	 *
-	 * @return current module instance
-	 * @author Seynax
-	 */
-	default StackRelativizable<T> inMiddle(final T childModuleIn)
-	{
-		this.childs().add(this.childs().size() / 2, childModuleIn);
-
-		return this;
-	}
-
-	/**
 	 * add all modules from childsModulesIn in the middle of the flux
 	 *
 	 * @return current module instance
@@ -113,19 +160,6 @@ public interface StackRelativizable<T>
 	}
 
 	/**
-	 * add childModuleIn module at the end of the flux
-	 *
-	 * @return current module instance
-	 * @author Seynax
-	 */
-	default StackRelativizable<T> atEnd(final T childModuleIn)
-	{
-		this.childs().add(childModuleIn);
-
-		return this;
-	}
-
-	/**
 	 * add all modules from childsModulesIn at the end of the flux
 	 *
 	 * @return current module instance
@@ -135,43 +169,6 @@ public interface StackRelativizable<T>
 	default StackRelativizable<T> atEndAll(final T... childsModulesIn)
 	{
 		Collections.addAll(this.childs(), childsModulesIn);
-
-		return this;
-	}
-
-	/**
-	 * add childModuleIn module according to the placement defined by the enum placementIn
-	 *
-	 * @return current module instance
-	 * @author Seynax
-	 */
-	default StackRelativizable<T> add(final EnumPosition positionIn, final T childModuleIn)
-	{
-		switch (positionIn)
-		{
-			case BEGIN -> this.atBegin(childModuleIn);
-			case MIDDLE -> this.inMiddle(childModuleIn);
-			default -> this.atEnd(childModuleIn);
-		}
-
-		return this;
-	}
-
-	/**
-	 * add all modules from childsModulesIn according to the placement defined by the enum placementIn
-	 *
-	 * @return current module instance
-	 * @author Seynax
-	 */
-	@SuppressWarnings("unchecked")
-	default StackRelativizable<T> addAll(final EnumPosition positionIn, final T... childsModulesIn)
-	{
-		switch (positionIn)
-		{
-			case BEGIN -> this.atBeginAll(childsModulesIn);
-			case MIDDLE -> this.inMiddleAll(childsModulesIn);
-			default -> this.atEndAll(childsModulesIn);
-		}
 
 		return this;
 	}
