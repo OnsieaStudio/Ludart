@@ -1,5 +1,6 @@
 module fr.onsiea.ludart.prototype
 {
+	exports fr.onsiea.ludart.prototype;
 	requires org.lwjgl;
 	requires org.lwjgl.glfw;
 	requires org.lwjgl.opengl;
