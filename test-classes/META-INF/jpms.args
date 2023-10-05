@@ -1,4 +1,4 @@
 --patch-module
-fr.onsiea.ludart.processor=_
+fr.onsiea.ludart.client=_
 --add-reads
-fr.onsiea.ludart.processor=ALL-UNNAMED
+fr.onsiea.ludart.client=ALL-UNNAMED
