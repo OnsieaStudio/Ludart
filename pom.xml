@@ -100,13 +100,13 @@
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
         <com.github.site.maven.plugin.version>0.12</com.github.site.maven.plugin.version>
+        <onsiea-utils-version>1.0-SNAPSHOT</onsiea-utils-version>
+        <onsiea-logger-version>1.0-SNAPSHOT</onsiea-logger-version>
+        <lombok-version>1.18.30</lombok-version>
         <repository.name>Ludart</repository.name>
         <repository.owner>OnsieaStudio</repository.owner>
         <repository.branch.name>maven</repository.branch.name>
         <github.global.server>github</github.global.server>
-        <onsiea-utils-version>1.0-SNAPSHOT</onsiea-utils-version>
-        <onsiea-logger-version>1.0-SNAPSHOT</onsiea-logger-version>
-        <lombok-version>1.18.30</lombok-version>
     </properties>
 
     <repositories>
@@ -172,7 +172,7 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <annotationProcessorPaths>
                         <annotationProcessorPath>
                             <groupId>org.projectlombok</groupId>
