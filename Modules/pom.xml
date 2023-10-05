@@ -133,6 +133,11 @@
                     <configuration>
                         <annotationProcessorPaths>
                             <annotationProcessorPath>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok-version}</version>
+                            </annotationProcessorPath>
+                            <annotationProcessorPath>
                                 <groupId>fr.onsiea.ludart.modules</groupId>
                                 <artifactId>processor</artifactId>
                                 <version>1.0-SNAPSHOT</version>
@@ -140,10 +145,12 @@
                         </annotationProcessorPaths>
                         <annotationProcessors>
                             <annotationProcessor>
+                                lombok.launch.AnnotationProcessorHider$AnnotationProcessor
+                            </annotationProcessor>
+                            <annotationProcessor>
                                 fr.onsiea.ludart.processor.ModuleProcessor
                             </annotationProcessor>
                         </annotationProcessors>
-                        <proc>both</proc>
                     </configuration>
                     <dependencies>
                         <dependency>

@@ -32,8 +32,11 @@
 
 package fr.onsiea.ludart.prototype;
 
-import lombok.AllArgsConstructor;
+import fr.onsiea.ludart.common.modules.ModuleBase;
+import fr.onsiea.ludart.common.modules.processor.LudartModule;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -47,17 +50,19 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+@NoArgsConstructor
+@Setter
 @Getter
-@AllArgsConstructor
-public class Prototype
+@LudartModule
+public class Prototype extends ModuleBase
 {
-	private final IPrototypeImpl prototypeImpl;
-	private final int            width;
-	private final int            height;
-	private final String         title;
-	private final int            frameRate;
-	private final int            updateRate;
-	private final boolean        sync;
+	private IPrototypeImpl prototypeImpl;
+	private int            width;
+	private int            height;
+	private String         title;
+	private int            frameRate;
+	private int            updateRate;
+	private boolean        sync;
 
 	public final void start()
 	{

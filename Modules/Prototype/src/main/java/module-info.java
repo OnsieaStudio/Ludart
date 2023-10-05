@@ -6,4 +6,6 @@ module fr.onsiea.ludart.prototype
 	requires org.lwjgl.opengl;
 
 	requires transitive lombok;
+	requires fr.onsiea.ludart.common;
+	requires fr.onsiea.tools.utils;
 }
