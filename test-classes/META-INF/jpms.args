@@ -1,4 +1,0 @@
---patch-module
-fr.onsiea.ludart.common=_
---add-reads
-fr.onsiea.ludart.common=ALL-UNNAMED
