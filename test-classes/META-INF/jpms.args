@@ -1,4 +1,4 @@
 --patch-module
-fr.onsiea.ludart.client=_
+fr.onsiea.ludart.core=_
 --add-reads
-fr.onsiea.ludart.client=ALL-UNNAMED
+fr.onsiea.ludart.core=ALL-UNNAMED
