@@ -1,1 +1,3 @@
-fr\onsiea\ludart\modules\manager\ModulesManager.class
+fr\onsiea\ludart\prototype\IPrototypeImpl.class
+module-info.class
+fr\onsiea\ludart\prototype\Prototype.class
