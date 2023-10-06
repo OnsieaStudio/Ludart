@@ -31,22 +31,104 @@
  */
 package fr.onsiea.ludart.modules.manager;
 
-import fr.onsiea.ludart.common.Framework;
 import fr.onsiea.ludart.common.modules.IModule;
+import fr.onsiea.ludart.common.modules.ModuleBase;
+import fr.onsiea.ludart.common.modules.manager.IModulesManager;
+import fr.onsiea.ludart.common.modules.processor.LudartModulesManager;
+import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
+import fr.onsiea.ludart.common.modules.schema.instanced.ModulesPositionedSchemas;
+import fr.onsiea.ludart.common.modules.schema.instanced.ModulesSchemasOrderSorter;
+import fr.onsiea.ludart.common.modules.settings.ModuleSettings;
+import fr.onsiea.tools.logger.Loggers;
+import lombok.Getter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ModulesManager
+@LudartModulesManager
+public class ModulesManager extends ModuleBase implements IModulesManager
 {
-	private final Map<String, IModule> allModules;
-
-	@SafeVarargs
-	public ModulesManager(final IModule... modulesClassesIn)
+	private final static ModuleSettings SETTINGS = new ModuleSettings.Builder()
 	{
-		this.allModules = new LinkedHashMap<>();
+		@Override
+		public boolean solve()
+		{
+			if (this.outputsPath == null)
+			{
+				this.outputsPath = "outputs";
+			}
 
-		this.addAll(modulesClassesIn);
+			if (this.logsBasePath == null)
+			{
+				this.logsBasePath = this.outputsPath + "\\logs\\modulesManager";
+			}
+
+			return super.solve();
+		}
+
+	}.build();
+
+	public final static Loggers LOGGERS = ModulesManager.SETTINGS.loggers();
+
+	private final   ModulesSchemas           schemas;
+	private final   Map<String, IModule>     moduleMap;
+	private @Getter ModulesPositionedSchemas schemasInstances;
+
+	public ModulesManager(ModulesSchemas schemasIn)
+	{
+		schemas   = schemasIn;
+		moduleMap = new LinkedHashMap<>();
+	}
+
+	@Override
+	public IModule startAll()
+	{
+		if (this.schemasInstances == null)
+		{
+			initialize();
+		}
+
+		this.moduleMap.forEach((sourceModuleNameIn, moduleIn) -> moduleIn.registries().startAll());
+
+		this.registries().atIteration().add("update", () -> this.moduleMap.forEach((sourceModuleNameIn, moduleIn) -> moduleIn.registries().iterateAll()));
+
+		this.registries().atStop().add("cleanup", () -> this.moduleMap.forEach((sourceModuleNameIn, moduleIn) -> moduleIn.registries().stopAll()));
+
+		return super.startAll();
+	}
+
+	public void initialize()
+	{
+		if (this.schemasInstances != null)
+		{
+			throw new RuntimeException("[ERROR] Framework is already initialized !");
+		}
+
+		ModulesSchemasOrderSorter schemasOrderSorter = new ModulesSchemasOrderSorter(this.schemas);
+		this.schemasInstances = schemasOrderSorter.sort();
+		this.schemasInstances.each((schemaInstanceIn) -> this.moduleMap.put(schemaInstanceIn.schema().sourceModuleClass().getSimpleName(), schemaInstanceIn.schema().moduleInitializer().execute()));
+	}
+
+	public final <T extends IModule> T module(Class<T> sourceModuleClassIn)
+	{
+		if (sourceModuleClassIn == null)
+		{
+			return null;
+		}
+
+		var module = this.moduleMap.get(sourceModuleClassIn.getSimpleName());
+
+		if (module == null)
+		{
+			return null;
+		}
+
+		if (sourceModuleClassIn.isInstance(module))
+		{
+			return (T) module;
+		}
+
+		return null;
 	}
 
 	public final ModulesManager addAll(final IModule... modulesIn)
@@ -63,55 +145,25 @@ public class ModulesManager
 	{
 		if (moduleIn == null)
 		{
-			Framework.LOGGERS.logErrLn("Cannot add module from null instance !");
+			LOGGERS.logErrLn("Cannot add module from null instance !");
 
 			return this;
 		}
 
 		final var moduleName = moduleIn.name();
-		if (this.allModules.containsKey(moduleName))
+		if (this.moduleMap.containsKey(moduleName))
 		{
-			Framework.LOGGERS.logErrLn("Module \"" + moduleName + "\" already exists !");
+			LOGGERS.logErrLn("Module \"" + moduleName + "\" already exists !");
 
 			return this;
 		}
-		this.allModules.put(moduleName, moduleIn);
+		this.moduleMap.put(moduleName, moduleIn);
 
 		return this;
 	}
 
 	public final IModule get(final String moduleNameIn)
 	{
-		return this.allModules.get(moduleNameIn);
-	}
-
-	public final ModulesManager startAll()
-	{
-		for (final var module : this.allModules.values())
-		{
-			module.startAll();
-		}
-
-		return this;
-	}
-
-	public final ModulesManager iterateAll()
-	{
-		for (final var module : this.allModules.values())
-		{
-			module.iterateAll();
-		}
-
-		return this;
-	}
-
-	public final ModulesManager stopAll()
-	{
-		for (final var module : this.allModules.values())
-		{
-			module.stopAll();
-		}
-
-		return this;
+		return this.moduleMap.get(moduleNameIn);
 	}
 }

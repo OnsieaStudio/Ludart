@@ -35,6 +35,7 @@ package fr.onsiea.ludart.processor;
 import com.google.auto.service.AutoService;
 import fr.onsiea.ludart.common.modules.IModule;
 import fr.onsiea.ludart.common.modules.processor.LudartModule;
+import fr.onsiea.ludart.common.modules.processor.LudartModulesManager;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -44,13 +45,13 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SupportedAnnotationTypes(value = "*")
@@ -68,17 +69,173 @@ public class ModuleProcessor extends AbstractProcessor
 
 		messager.printMessage(Kind.NOTE, "Module Processor is loaded. Modules detection started.");
 
-		var annotatedElements = roundEnv.getElementsAnnotatedWith(LudartModule.class);
-		var annotatedClasses  = annotatedElements.stream().collect(Collectors.partitioningBy(element -> (element.getKind().isClass())));
-		var classes           = annotatedClasses.get(true);
+		var groupedModulesClasses = collectAll(roundEnv, elementUtils, typeUtils, LudartModulesManager.class, LudartModule.class);
 
-		if (classes.size() == 0)
+		if (groupedModulesClasses.size() == 0)
 		{
 			return true;
 		}
 
-		var groupedModulesClasses = new HashMap<String, List<Element>>();
-		var packages              = new ArrayList<String>();
+		for (var moduleEntry : groupedModulesClasses.entrySet())
+		{
+			var    modulesSchemasPackageName = moduleEntry.getKey();
+			var    lastDot                   = modulesSchemasPackageName.lastIndexOf('.');
+			String className                 = null;
+			if (lastDot > 0)
+			{
+				var lastElement = modulesSchemasPackageName.substring(lastDot + 1);
+				className = lastElement.substring(0, 1).toUpperCase() + lastElement.substring(1) + "ModulesDescriptor";
+			}
+
+			String packageName   = "fr.onsiea.ludart.modules.processor.descriptors";
+			var    qualifiedName = packageName + "." + className;
+
+			var modulesClasses = moduleEntry.getValue();
+
+			if (modulesClasses == null || modulesClasses.size() == 0)
+			{
+				continue;
+			}
+
+			try (PrintWriter out = new PrintWriter((filer.createSourceFile(qualifiedName).openOutputStream())))
+			{
+				if (packageName != null)
+				{
+					out.print("package ");
+					out.print(packageName);
+					out.println(";");
+					out.println();
+				}
+				out.println("import fr.onsiea.ludart.common.modules.processor.LudartModulesDescriptor;");
+				out.println("import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;");
+				out.println();
+
+				for (var moduleClass : modulesClasses)
+				{
+					out.println("import " + ((TypeElement) moduleClass).getQualifiedName() + ";");
+				}
+				out.println();
+
+				out.println("@LudartModulesDescriptor(count = " + modulesClasses.size() + ")");
+				out.print("public class ");
+				out.println(className);
+				out.println("{");
+				out.println("\tpublic final static void resolve(ModulesSchemas.Builder schemasBuilderIn)");
+				out.println("\t{");
+
+				out.println("\t\tfinal var modulesSchemasPackage = schemasBuilderIn.makePackage(\"" + modulesSchemasPackageName + "\", " + modulesClasses.size() + ");");
+				for (var moduleClass : modulesClasses)
+				{
+					out.print("\t\tmodulesSchemasPackage.add(");
+					out.print(moduleClass.getSimpleName());
+					out.print(".class, ");
+
+
+					var annotation = moduleClass.getAnnotation(LudartModule.class);
+					if (annotation == null)
+					{
+						if (moduleClass.getAnnotation(LudartModulesManager.class) == null)
+						{
+							messager.printMessage(Kind.ERROR, "[ERROR] ModuleProcessor : module class must annoted by @LudartModule and @LudartModulesManager !");
+
+							return false;
+						}
+
+						out.print("() -> null");
+					}
+					else
+					{
+						out.print("() -> new ");
+						out.print(moduleClass.getSimpleName());
+						out.print("()");
+
+						List<? extends TypeMirror> dependencies = getTypeMirrorFromAnnotationValue(() -> annotation.dependencies());
+						if (dependencies != null && dependencies.size() > 0)
+						{
+							out.print(", ");
+							int i = 0;
+							for (var dependency : dependencies)
+							{
+								String dependencyClassName = null;
+
+								if (dependency.getKind().equals(TypeKind.DECLARED))
+								{
+									dependencyClassName = ((DeclaredType) dependency).asElement().getSimpleName().toString();
+								}
+								else
+								{
+									dependencyClassName = dependency.toString();
+								}
+								out.print(dependencyClassName);
+								out.print(".class");
+
+								i++;
+								if (i < dependencies.size())
+								{
+									out.print(", ");
+								}
+							}
+						}
+					}
+					out.println(");");
+				}
+
+				out.println("\t}");
+				out.print("}");
+			}
+			catch (IOException eIn)
+			{
+				throw new RuntimeException(eIn);
+			}
+		}
+
+		return true;
+	}
+
+	private Map<String, List<Element>> collectAll(RoundEnvironment roundEnvIn, Elements elementUtilsIn, Types typeUtilsIn, Class<? extends Annotation>... annotationsIn)
+	{
+		final var groupedModulesClasses = new HashMap<String, List<Element>>();
+		var       packages              = new ArrayList<String>();
+
+		for (var annotation : annotationsIn)
+		{
+			collect(roundEnvIn, annotation, groupedModulesClasses, packages, elementUtilsIn, typeUtilsIn);
+		}
+
+		packages.clear();
+
+		return groupedModulesClasses;
+	}
+
+	public static List<? extends TypeMirror> getTypeMirrorFromAnnotationValue(GetClassValue classValueIn)
+	{
+		try
+		{
+			classValueIn.execute();
+		}
+		catch (MirroredTypesException ex)
+		{
+			return ex.getTypeMirrors();
+		}
+
+		return null;
+	}
+
+	private static void collect(RoundEnvironment roundEnv, Class<? extends Annotation> annotationIn, Map<String, List<Element>> groupedModulesClasses, List<String> packages, Elements elementUtils, Types typeUtils)
+	{
+		var annotatedElements = roundEnv.getElementsAnnotatedWith(annotationIn);
+		if (annotatedElements == null || annotatedElements.size() == 0)
+		{
+			return;
+		}
+
+		var annotatedClasses = annotatedElements.stream().collect(Collectors.partitioningBy(element -> (element.getKind().isClass())));
+		var classes          = annotatedClasses.get(true);
+
+		if (classes.size() == 0)
+		{
+			return;
+		}
 
 		for (var clazz : classes)
 		{
@@ -98,7 +255,7 @@ public class ModuleProcessor extends AbstractProcessor
 			}
 			else
 			{
-				var packageName = processingEnv.getElementUtils().getPackageOf(clazz).toString();
+				var packageName = elementUtils.getPackageOf(clazz).toString();
 				if (packageName == null)
 				{
 					groupName = clazz.getSimpleName().toString();
@@ -158,121 +315,6 @@ public class ModuleProcessor extends AbstractProcessor
 			}
 			elements.add(clazz);
 		}
-
-		if (groupedModulesClasses.size() == 0)
-		{
-			return true;
-		}
-
-		for (var moduleEntry : groupedModulesClasses.entrySet())
-		{
-			var    groupName = moduleEntry.getKey();
-			var    lastDot   = groupName.lastIndexOf('.');
-			String className = null;
-			if (lastDot > 0)
-			{
-				var lastElement = groupName.substring(lastDot + 1);
-				className = lastElement.substring(0, 1).toUpperCase() + lastElement.substring(1) + "ModulesDescriptor";
-			}
-
-			String packageName   = "fr.onsiea.ludart.modules.processor";
-			var    qualifiedName = packageName + "." + className;
-
-			var modulesClasses = moduleEntry.getValue();
-
-			if (modulesClasses == null || modulesClasses.size() == 0)
-			{
-				continue;
-			}
-
-			try (PrintWriter out = new PrintWriter((filer.createSourceFile(qualifiedName).openOutputStream())))
-			{
-				if (packageName != null)
-				{
-					out.print("package ");
-					out.print(packageName);
-					out.println(";");
-					out.println();
-				}
-				out.println("import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;");
-				out.println();
-
-				for (var moduleClass : modulesClasses)
-				{
-					out.println("import " + ((TypeElement) moduleClass).getQualifiedName() + ";");
-				}
-				out.println();
-
-				out.print("public class ");
-				out.println(className);
-				out.println("{");
-				out.println("\tpublic final static void resolveSchema(ModulesSchemas.Builder schemasBuilderIn)");
-				out.println("\t{");
-
-				for (var moduleClass : modulesClasses)
-				{
-					var annotation = moduleClass.getAnnotation(LudartModule.class);
-
-					out.print("\t\tschemasBuilderIn.batch(");
-					out.print(moduleClass.getSimpleName());
-					out.print(".class, () -> new ");
-					out.print(moduleClass.getSimpleName());
-					out.print("()");
-
-					List<? extends TypeMirror> dependencies = getTypeMirrorFromAnnotationValue(() -> annotation.dependencies());
-					if (dependencies != null && dependencies.size() > 0)
-					{
-						out.print(", ");
-						int i = 0;
-						for (var dependency : dependencies)
-						{
-							String dependencyClassName = null;
-
-							if (dependency.getKind().equals(TypeKind.DECLARED))
-							{
-								dependencyClassName = ((DeclaredType) dependency).asElement().getSimpleName().toString();
-							}
-							else
-							{
-								dependencyClassName = dependency.toString();
-							}
-							out.print(dependencyClassName);
-							out.print(".class");
-
-							i++;
-							if (i < dependencies.size())
-							{
-								out.print(", ");
-							}
-						}
-					}
-					out.println(");");
-				}
-
-				out.println("\t}");
-				out.print("}");
-			}
-			catch (IOException eIn)
-			{
-				throw new RuntimeException(eIn);
-			}
-		}
-
-		return true;
-	}
-
-	public static List<? extends TypeMirror> getTypeMirrorFromAnnotationValue(GetClassValue classValueIn)
-	{
-		try
-		{
-			classValueIn.execute();
-		}
-		catch (MirroredTypesException ex)
-		{
-			return ex.getTypeMirrors();
-		}
-
-		return null;
 	}
 
 	@FunctionalInterface

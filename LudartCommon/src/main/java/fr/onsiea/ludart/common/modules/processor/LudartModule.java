@@ -32,6 +32,10 @@
 
 package fr.onsiea.ludart.common.modules.processor;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface LudartModule
 {
 	Class<?>[] dependencies() default {};

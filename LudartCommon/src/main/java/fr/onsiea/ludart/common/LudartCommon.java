@@ -29,7 +29,7 @@
  * @Author : Seynax (https://github.com/seynax)
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
-package fr.onsiea.ludart.common.modules;
+package fr.onsiea.ludart.common;
 
 import fr.onsiea.ludart.common.modules.settings.ModuleSettings;
 import fr.onsiea.tools.logger.Loggers;

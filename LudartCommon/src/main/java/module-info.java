@@ -3,7 +3,9 @@ module fr.onsiea.ludart.common
 	requires fr.onsiea.tools.logger;
 	requires fr.onsiea.tools.utils;
 	requires transitive lombok;
+	requires org.reflections;
 
+	exports fr.onsiea.ludart.common;
 	exports fr.onsiea.ludart.common.modules;
 	exports fr.onsiea.ludart.common.modules.nodes;
 	exports fr.onsiea.ludart.common.modules.schema;

@@ -29,88 +29,13 @@
  * @Author : Seynax (https://github.com/seynax)
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
-package fr.onsiea.ludart.common;
 
-import fr.onsiea.ludart.common.modules.IModule;
+package fr.onsiea.ludart.common.modules.processor;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class ModulesManager
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LudartModulesManager
 {
-	private final Map<String, IModule> allModules;
-
-	@SafeVarargs
-	public ModulesManager(final IModule... modulesClassesIn)
-	{
-		this.allModules = new LinkedHashMap<>();
-
-		this.addAll(modulesClassesIn);
-	}
-
-	public final ModulesManager addAll(final IModule... modulesIn)
-	{
-		for (final var moduleClass : modulesIn)
-		{
-			this.add(moduleClass);
-		}
-
-		return this;
-	}
-
-	public final ModulesManager add(final IModule moduleIn)
-	{
-		if (moduleIn == null)
-		{
-			Framework.LOGGERS.logErrLn("Cannot add module from null instance !");
-
-			return this;
-		}
-
-		final var moduleName = moduleIn.name();
-		if (this.allModules.containsKey(moduleName))
-		{
-			Framework.LOGGERS.logErrLn("Module \"" + moduleName + "\" already exists !");
-
-			return this;
-		}
-		this.allModules.put(moduleName, moduleIn);
-
-		return this;
-	}
-
-	public final IModule get(final String moduleNameIn)
-	{
-		return this.allModules.get(moduleNameIn);
-	}
-
-	public final ModulesManager startAll()
-	{
-		for (final var module : this.allModules.values())
-		{
-			module.startAll();
-		}
-
-		return this;
-	}
-
-	public final ModulesManager iterateAll()
-	{
-		for (final var module : this.allModules.values())
-		{
-			module.iterateAll();
-		}
-
-		return this;
-	}
-
-	public final ModulesManager stopAll()
-	{
-		for (final var module : this.allModules.values())
-		{
-			module.stopAll();
-		}
-
-		return this;
-	}
 }

@@ -47,7 +47,8 @@
     <version>1.0-SNAPSHOT</version>
     <name>Client</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
-    <description>Client module package (window, user input and outputs, render, resources ...) of Ludart (2D-3D video-game modular framework. Use LWJGL library)
+    <description>Client module package (window, user input and outputs, render, resources ...) of Ludart (2D-3D
+        video-game modular framework. Use LWJGL library)
     </description>
     <inceptionYear>2023</inceptionYear>
 

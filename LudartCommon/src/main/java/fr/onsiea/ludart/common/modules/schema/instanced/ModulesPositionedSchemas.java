@@ -68,8 +68,8 @@ public class ModulesPositionedSchemas
 
 		public Node<String, ModulePositionedSchema> add(ModulePositionedSchema instancedSchemaIn)
 		{
-			var newNode = new Node<>(this.root, instancedSchemaIn.schema().sourceModuleName(), instancedSchemaIn);
-			this.add.add(instancedSchemaIn.schema().sourceModuleName(), instancedSchemaIn);
+			var newNode = new Node<>(this.root, instancedSchemaIn.schema().sourceModuleClass().getSimpleName(), instancedSchemaIn);
+			this.add.add(instancedSchemaIn.schema().sourceModuleClass().getSimpleName(), instancedSchemaIn);
 
 			return newNode;
 		}
@@ -86,7 +86,7 @@ public class ModulesPositionedSchemas
 				throw new NullPointerException("[ERROR] InstancedSchemas : cannot add null instanced schema after \"" + afterNodeIn.key() + "\" node !");
 			}
 
-			var newNode = new Node<>(this.root, instancedSchemaIn.schema().sourceModuleName(), instancedSchemaIn);
+			var newNode = new Node<>(this.root, instancedSchemaIn.schema().sourceModuleClass().getSimpleName(), instancedSchemaIn);
 			afterNodeIn.addAfter(newNode);
 
 			return newNode;

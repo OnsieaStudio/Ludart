@@ -176,4 +176,13 @@ public class Nodes<K, V>
 	{
 		return this.last;
 	}
+
+	public Nodes<K, V> clear()
+	{
+		first = null;
+		last  = null;
+		size  = 0;
+
+		return this;
+	}
 }

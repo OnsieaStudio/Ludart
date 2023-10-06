@@ -49,7 +49,8 @@
     <name>Recommended</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
     <description>pom "recommended" configuration
-        to directly add all recommended modules packages as dependencies from Ludart (2D-3D video-game modular framework),
+        to directly add all recommended modules packages as dependencies from Ludart (2D-3D video-game modular
+        framework),
         that's to say : modules manager, game logics, core and client.
     </description>
     <inceptionYear>2023</inceptionYear>

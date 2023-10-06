@@ -30,75 +30,24 @@
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common;
+package fr.onsiea.ludart.common.modules.manager;
 
-import fr.onsiea.ludart.common.modules.manager.IModulesManager;
-import fr.onsiea.ludart.common.modules.schema.ModuleSchema;
+import fr.onsiea.ludart.common.modules.IModule;
 import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
-import fr.onsiea.ludart.common.modules.schema.ModulesSchemas.ByNodes;
-import fr.onsiea.tools.utils.function.IIFunction;
-import fr.onsiea.tools.utils.function.IOIFunction;
-import lombok.Getter;
-import lombok.experimental.Delegate;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class Framework
+public interface IModulesManager extends IModule
 {
-	private final @Delegate IModulesManager modulesManager;
-
-	Framework(IModulesManager modulesManagerIn)
+	interface IFactory
 	{
-		modulesManager = modulesManagerIn;
-	}
-
-	public final static class Builder
-	{
-		private final @Getter ModulesSchemas schemas;
-
-		public Builder() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException
+		default String name()
 		{
-			schemas = new BootPrimer().boot(new ModulesSchemas.Builder());
+			return this.moduleClass().getSimpleName();
 		}
 
-		public ModuleSchema ofReverse(String toGetIn)
-		{
-			return schemas.ofReverse(toGetIn);
-		}
+		Class<? extends IModulesManager> moduleClass();
 
-		public ModuleSchema of(String toGetIn)
-		{
-			return schemas.of(toGetIn);
-		}
-
-		public ModulesSchemas takeWhileReverse(IOIFunction<Boolean, ModuleSchema> functionIn)
-		{
-			return schemas.takeWhileReverse(functionIn);
-		}
-
-		public ModulesSchemas takeWhile(IOIFunction<Boolean, ModuleSchema> functionIn)
-		{
-			return schemas.takeWhile(functionIn);
-		}
-
-		public ModulesSchemas eachReverse(IIFunction<ModuleSchema> functionIn)
-		{
-			return schemas.eachReverse(functionIn);
-		}
-
-		public ModulesSchemas each(IIFunction<ModuleSchema> functionIn)
-		{
-			return schemas.each(functionIn);
-		}
-
-		public ByNodes byNodes()
-		{
-			return schemas.byNodes();
-		}
-
-		public Framework build() throws InvocationTargetException, InstantiationException, IllegalAccessException
-		{
-			return new Framework(schemas.modulesManagerSchemaFactory().create(schemas));
-		}
+		IModulesManager create(ModulesSchemas schemasIn) throws InvocationTargetException, InstantiationException, IllegalAccessException;
 	}
 }

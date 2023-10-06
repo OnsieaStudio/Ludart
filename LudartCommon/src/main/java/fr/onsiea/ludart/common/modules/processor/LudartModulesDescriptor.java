@@ -30,58 +30,13 @@
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common.modules.schema;
+package fr.onsiea.ludart.common.modules.processor;
 
-import fr.onsiea.ludart.common.modules.IModule;
-import fr.onsiea.tools.utils.function.IOFunction;
-import fr.onsiea.tools.utils.function.IOIFunction;
-import lombok.Getter;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-@Getter
-public class ModuleSchema
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LudartModulesDescriptor
 {
-	private final Class<? extends IModule> sourceModuleClass;
-	private final IOFunction<IModule>      moduleInitializer;
-	private final boolean                  isNeeded;
-	private final String[]                 dependencies;
-
-	public ModuleSchema(Class<? extends IModule> sourceModuleClassIn, IOFunction<IModule> moduleInitializerIn, boolean isNeededIn, Class<? extends IModule>... dependenciesIn)
-	{
-		this.sourceModuleClass = sourceModuleClassIn;
-		this.moduleInitializer = moduleInitializerIn;
-		this.isNeeded          = isNeededIn;
-		this.dependencies      = new String[dependenciesIn.length];
-		if (dependenciesIn == null)
-		{
-			return;
-		}
-
-		int i = 0;
-		for (var dependency : dependenciesIn)
-		{
-			if (dependency != null)
-			{
-				this.dependencies[i] = dependency.getSimpleName();
-			}
-
-			i++;
-		}
-	}
-
-	public interface IFactory
-	{
-		default ModuleSchema create()
-		{
-			return supplier().execute(name());
-		}
-
-		IOIFunction<ModuleSchema, String> supplier();
-
-		default String name()
-		{
-			return moduleClass().getSimpleName();
-		}
-
-		Class<? extends IModule> moduleClass();
-	}
+	int count();
 }

@@ -47,7 +47,8 @@
     <version>1.0-SNAPSHOT</version>
     <name>Game</name>
     <url>https://github.com/OnsieaStudio/Ludart</url>
-    <description>Game logics module package (chunks, entities logics, world) of Ludart (2D-3D video-game modular framework)
+    <description>Game logics module package (chunks, entities logics, world) of Ludart (2D-3D video-game modular
+        framework)
     </description>
     <inceptionYear>2023</inceptionYear>
 

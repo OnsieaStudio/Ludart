@@ -33,14 +33,21 @@
 package fr.onsiea.ludart.common.modules.schema;
 
 import fr.onsiea.ludart.common.modules.IModule;
+import fr.onsiea.ludart.common.modules.manager.IModulesManager;
 import fr.onsiea.ludart.common.modules.nodes.Components;
 import fr.onsiea.ludart.common.modules.nodes.Node;
 import fr.onsiea.ludart.common.modules.nodes.NodeComponents;
 import fr.onsiea.ludart.common.modules.nodes.Nodes;
+import fr.onsiea.ludart.common.modules.processor.LudartModulesManager;
 import fr.onsiea.tools.utils.function.IIFunction;
 import fr.onsiea.tools.utils.function.IOFunction;
 import fr.onsiea.tools.utils.function.IOIFunction;
+import lombok.Getter;
 import lombok.experimental.Delegate;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ModulesSchemas
 {
@@ -49,10 +56,13 @@ public class ModulesSchemas
 	private final @Delegate Components.Get<String, ModuleSchema, String>          get;
 	private final @Delegate Components.Each<String, ModuleSchema, ModulesSchemas> each;
 
-	private ModulesSchemas(Nodes<String, ModuleSchema> rootIn, Components.Get<String, ModuleSchema, String> getIn)
+	private final @Getter IModulesManager.IFactory modulesManagerSchemaFactory;
+
+	private ModulesSchemas(Nodes<String, ModuleSchema> rootIn, Components.Get<String, ModuleSchema, String> getIn, IModulesManager.IFactory modulesManagerSchemaIn)
 	{
-		this.root = rootIn;
-		this.get  = getIn;
+		this.root                   = rootIn;
+		this.get                    = getIn;
+		modulesManagerSchemaFactory = modulesManagerSchemaIn;
 
 		this.each = new Components.Each<>(this, this.root);
 	}
@@ -60,6 +70,11 @@ public class ModulesSchemas
 	public final ByNodes byNodes()
 	{
 		return new ByNodes(this.root);
+	}
+
+	public final void clear()
+	{
+		root.clear();
 	}
 
 	public final static class ByNodes
@@ -101,6 +116,10 @@ public class ModulesSchemas
 
 		private final IOIFunction<String, String> keyInitializer;
 
+		private final Map<String, ModulesSchemasPackage> packageMap;
+
+		private IModulesManager.IFactory modulesManager;
+
 		public Builder()
 		{
 			this.root = new Nodes<>();
@@ -109,27 +128,194 @@ public class ModulesSchemas
 			this.batch = Components.Batch.byKey(this.root, new NodeComponents.Add<>(this.root));
 
 			this.keyInitializer = (keyIn) -> keyIn;
+
+			packageMap = new LinkedHashMap<>();
+		}
+
+		public ModulesSchemasPackage makePackage(String packageNameIn, int moduleCountIn)
+		{
+			if (moduleCountIn <= 0)
+			{
+				throw new RuntimeException("[ERROR] ModulesSchemasPackageList.Builder : cannot make package without modules ! \"" + packageNameIn + "\", \"" + moduleCountIn + "\"");
+			}
+
+			if (packageMap.containsKey(packageNameIn))
+			{
+				throw new RuntimeException("[ERROR] ModulesSchemasPackageList.Builder : package already exists ! \"" + packageNameIn + "\"");
+			}
+
+			var modulesSchemasPackage = new ModulesSchemasPackage(this, packageNameIn, moduleCountIn);
+
+			packageMap.put(modulesSchemasPackage.name, modulesSchemasPackage);
+
+			return modulesSchemasPackage;
+		}
+
+		private void build(ModulesSchemasPackage modulesSchemasPackageIn) throws IllegalAccessException, NoSuchMethodException
+		{
+			if (!packageMap.containsKey(modulesSchemasPackageIn.name()))
+			{
+				throw new IllegalAccessException("[ERROR] ModulesSchemas.Builder : cannot build unregistered modules schemas package ! \"" + modulesSchemasPackageIn.name() + "\" is unknown !");
+			}
+
+			if (modulesSchemasPackageIn.currentIndex() > 0)
+			{
+				for (var moduleSchema : modulesSchemasPackageIn.schemaArray)
+				{
+					if (moduleSchema.moduleClass().isAnnotationPresent(LudartModulesManager.class))
+					{
+						if (!IModulesManager.class.isAssignableFrom(moduleSchema.moduleClass()))
+						{
+							throw new IllegalStateException("[ERROR] ModulesSchemas.Builder : cannot load module with @LudartModuleManager annotation, which does not implement IModulesManager !");
+						}
+
+						final var modulesManagerClass = (Class<? extends IModulesManager>) moduleSchema.moduleClass();
+						var       constructor         = modulesManagerClass.getConstructor(ModulesSchemas.class);
+						if (constructor == null)
+						{
+							throw new IllegalStateException("[ERROR] ModulesSchemas.Builder : modules manager must had constructor with one ModulesSchemas parameter  !");
+						}
+
+						if (modulesManager != null)
+						{
+							System.out.println("[WARNING] ModulesSchemas.Builder : last modules manager \"" + modulesManager.name() + "\" replaced by new \"" + moduleSchema.name() + "\" !");
+						}
+
+						modulesManager = new IModulesManager.IFactory()
+						{
+							@Override
+							public Class<? extends IModulesManager> moduleClass()
+							{
+								return modulesManagerClass;
+							}
+
+							@Override
+							public IModulesManager create(ModulesSchemas schemasIn) throws InvocationTargetException, InstantiationException, IllegalAccessException
+							{
+								return constructor.newInstance(schemasIn);
+							}
+						};
+
+						continue;
+					}
+					this.batch.batch(moduleSchema.name(), this.keyInitializer, moduleSchema.supplier());
+				}
+			}
+
+			packageMap.remove(modulesSchemasPackageIn);
+		}
+
+		public ModulesSchemas build() throws IllegalAccessException, NoSuchMethodException
+		{
+			for (var modulesSchemasPackage : packageMap.values())
+			{
+				modulesSchemasPackage.build();
+			}
+			packageMap.clear();
+
+			return new ModulesSchemas(this.root, this.get, modulesManager);
+		}
+	}
+
+	public final static class ModulesSchemasPackage
+	{
+		private final         ModulesSchemas.Builder  modulesSchemas;
+		private final @Getter String                  name;
+		private final         Map<String, Integer>    indexMap;
+		private final         ModuleSchema.IFactory[] schemaArray;
+		private @Getter       int                     currentIndex;
+
+		private boolean builded;
+
+		ModulesSchemasPackage(final ModulesSchemas.Builder modulesSchemasIn, final String nameIn, final int sizeIn)
+		{
+			modulesSchemas = modulesSchemasIn;
+			name           = nameIn;
+			indexMap       = new LinkedHashMap<>();
+			schemaArray    = new ModuleSchema.IFactory[sizeIn];
 		}
 
 		@SafeVarargs
-		public final Builder batchNeeded(final Class<?> sourceModuleClassIn, final IOFunction<IModule> defaultModuleInitializerIn, final Class<? extends IModule>... dependenciesIn)
+		public final ModulesSchemasPackage add(final Class<? extends IModule> sourceModuleClassIn, final IOFunction<IModule> defaultModuleInitializerIn, final Class<? extends IModule>... dependenciesIn)
 		{
-			this.batch.batch(sourceModuleClassIn.getSimpleName(), this.keyInitializer, (keyIn) -> new ModuleSchema(sourceModuleClassIn, defaultModuleInitializerIn, true, dependenciesIn));
+			return add(sourceModuleClassIn, defaultModuleInitializerIn, false, dependenciesIn);
+		}
+
+		public ModulesSchemasPackage add(final Class<? extends IModule> sourceModuleClassIn, final IOFunction<IModule> defaultModuleInitializerIn, boolean neededIn, final Class<? extends IModule>... dependenciesIn)
+		{
+			if (!IModule.class.isAssignableFrom(sourceModuleClassIn))
+			{
+				throw new RuntimeException("[ERROR] ModulesSchemasPackage : cannot add module schema from class which does not implement IModule !");
+			}
+
+			for (var dependency : dependenciesIn)
+			{
+				if (!IModule.class.isAssignableFrom(dependency))
+				{
+					throw new RuntimeException("[ERROR] ModulesSchemasPackage : cannot add dependency into module schema from class which does not implement IModule !");
+				}
+			}
+
+			Integer index = indexMap.get(sourceModuleClassIn.getSimpleName());
+
+			if (index != null)
+			{
+				return this;
+			}
+
+			if (currentIndex >= schemaArray.length)
+			{
+				throw new ArrayIndexOutOfBoundsException("[ERROR] ModulesSchemasPackage : array index out of bounds exception for \"" + currentIndex + "\" from array with \"" + schemaArray.length + "\" length !");
+			}
+
+			schemaArray[currentIndex] = new ModuleSchema.IFactory()
+			{
+				@Override
+				public IOIFunction<ModuleSchema, String> supplier()
+				{
+					return (keyIn) -> new ModuleSchema(sourceModuleClassIn, defaultModuleInitializerIn, neededIn, dependenciesIn);
+				}
+
+				@Override
+				public Class<? extends IModule> moduleClass()
+				{
+					return sourceModuleClassIn;
+				}
+			};
+
+			currentIndex++;
 
 			return this;
 		}
 
 		@SafeVarargs
-		public final Builder batch(final Class<?> sourceModuleClassIn, final IOFunction<IModule> defaultModuleInitializerIn, final Class<? extends IModule>... dependenciesIn)
+		public final ModulesSchemasPackage addNeeded(final Class<? extends IModule> sourceModuleClassIn, final IOFunction<IModule> defaultModuleInitializerIn, final Class<? extends IModule>... dependenciesIn)
 		{
-			this.batch.batch(sourceModuleClassIn.getSimpleName(), this.keyInitializer, (keyIn) -> new ModuleSchema(sourceModuleClassIn, defaultModuleInitializerIn, false, dependenciesIn));
-
-			return this;
+			return add(sourceModuleClassIn, defaultModuleInitializerIn, true, dependenciesIn);
 		}
 
-		public ModulesSchemas build()
+		public ModulesSchemas.Builder build() throws IllegalAccessException, NoSuchMethodException
 		{
-			return new ModulesSchemas(this.root, this.get);
+			if (builded)
+			{
+				return modulesSchemas;
+			}
+
+			if (currentIndex != schemaArray.length)
+			{
+				System.out.println("[INFO] ModulesSchemas.Package : The number of loaded module plans is not equal to the number of desired modules, this may be due to modules having the same identifier, which results in replacement by the last loaded module.");
+			}
+
+			modulesSchemas.build(this);
+			for (int i = 0; i < schemaArray.length; i++)
+			{
+				schemaArray[i] = null;
+			}
+			indexMap.clear();
+			currentIndex = 0;
+			builded      = true;
+
+			return modulesSchemas;
 		}
 	}
 }
