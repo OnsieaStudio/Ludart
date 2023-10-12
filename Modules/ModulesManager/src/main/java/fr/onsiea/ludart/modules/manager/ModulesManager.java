@@ -88,6 +88,37 @@ public class ModulesManager extends ModuleBase implements IModulesManager
 			initialize();
 		}
 
+		this.schemasInstances.each((schemaInstanceIn) ->
+		{
+			var module = moduleMap.get(schemaInstanceIn.schema().sourceModuleClass().getSimpleName());
+			if (module == null)
+			{
+				return;
+			}
+
+			var dependencies = schemaInstanceIn.schema().dependencies();
+
+			IModule[] dependenciesInstances = null;
+			if (dependencies != null && dependencies.length > 0)
+			{
+				dependenciesInstances = new IModule[dependencies.length + 1];
+				int i = 0;
+				for (var dependency : dependencies)
+				{
+					var dependencyModule = moduleMap.get(dependency);
+
+					if (!(dependencyModule instanceof IModule))
+					{
+						continue;
+					}
+
+					dependenciesInstances[i] = dependencyModule;
+
+					i++;
+				}
+			}
+			module.dependencies(this, dependenciesInstances);
+		});
 		this.moduleMap.forEach((sourceModuleNameIn, moduleIn) -> moduleIn.registries().startAll());
 
 		this.registries().atIteration().add("update", () -> this.moduleMap.forEach((sourceModuleNameIn, moduleIn) -> moduleIn.registries().iterateAll()));
@@ -106,7 +137,17 @@ public class ModulesManager extends ModuleBase implements IModulesManager
 
 		ModulesSchemasOrderSorter schemasOrderSorter = new ModulesSchemasOrderSorter(this.schemas);
 		this.schemasInstances = schemasOrderSorter.sort();
-		this.schemasInstances.each((schemaInstanceIn) -> this.moduleMap.put(schemaInstanceIn.schema().sourceModuleClass().getSimpleName(), schemaInstanceIn.schema().moduleInitializer().execute()));
+		this.schemasInstances.each((schemaInstanceIn) ->
+		{
+			this.moduleMap.put(schemaInstanceIn.schema().sourceModuleClass().getSimpleName(),
+					schemaInstanceIn.schema().moduleInitializer().execute());
+		});
+	}
+
+	@Override
+	public void stop()
+	{
+		isWorking = false;
 	}
 
 	public final <T extends IModule> T module(Class<T> sourceModuleClassIn)

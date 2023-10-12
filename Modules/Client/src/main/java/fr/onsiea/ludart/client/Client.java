@@ -35,7 +35,7 @@ package fr.onsiea.ludart.client;
 import fr.onsiea.ludart.common.modules.ModuleBase;
 import fr.onsiea.ludart.common.modules.processor.LudartModule;
 
-@LudartModule
+@LudartModule()
 public class Client extends ModuleBase
 {
 }

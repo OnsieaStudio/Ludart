@@ -45,7 +45,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Framework
 {
-	private final @Delegate IModulesManager modulesManager;
+	private final @Getter
+	@Delegate IModulesManager modulesManager;
 
 	Framework(IModulesManager modulesManagerIn)
 	{

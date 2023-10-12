@@ -164,7 +164,7 @@ public class Nodes<K, V>
 
 	Nodes<K, V> updateLast(Node<K, V> fromIn, Node<K, V> toIn)
 	{
-		if (fromIn.is(this.last.key()))
+		if (last == null || fromIn.is(this.last.key()))
 		{
 			this.last = toIn;
 		}

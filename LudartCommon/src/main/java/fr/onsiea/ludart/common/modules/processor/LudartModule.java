@@ -38,5 +38,38 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LudartModule
 {
-	Class<?>[] dependencies() default {};
+	Class<?> parent() default NULL.class; // if null, the parent is the manager module, if not null, will be stored in the parent and executed by it, specifying the current module as parent raises an error
+
+	Class<?> inherited() default NULL.class; // if not null inherits dependencies and addons settings from the specified module, specifying the current module as inherited raises an error
+
+	Class<?>[] dependencies() default {};   // mandatory dependencies, specifying the current module as dependency raises an error
+
+	Class<?>[] addons() default {}; // additional dependencies, specifying the current module as addon raises an error
+
+	String insteadOf() default ""; // the qualified name of the class which must be replaced by the module, does not take a "Class<?>" parameter to avoid having to have the class of the module in question, specifying the current module as "instead of" raises an error
+
+	byte insteadOfPriority() default 0; // if several modules replace the same module, the one with the replacement priority value takes precedence over the others
+
+	/**
+	 * MANDATORY : cannot be removed, if replaceable is true, can be replaced to be removed
+	 * DEVELOPER_EXPLICIT_CHOICE : developer must explicitly request that the module must be loaded, is still loaded if another loaded module is dependent on it
+	 * LOADED_BY_DEFAULT : loaded by default, the developer must explicitly ask for it not to be loaded, if the developer explicitly says that it should not be loaded, a warning or even an error will be raised (depending on the developer's configuration)
+	 *
+	 * @return
+	 */
+	LoadType loadType() default LoadType.DEVELOPER_EXPLICIT_CHOICE;
+
+	boolean replaceable() default true; // if true, can be replaced by another module
+
+	enum LoadType
+	{
+		MANDATORY,
+		DEVELOPER_EXPLICIT_CHOICE,
+		LOADED_BY_DEFAULT,
+	}
+
+	final class NULL
+	{
+
+	}
 }

@@ -35,7 +35,9 @@ package fr.onsiea.ludart.processor;
 import com.google.auto.service.AutoService;
 import fr.onsiea.ludart.common.modules.IModule;
 import fr.onsiea.ludart.common.modules.processor.LudartModule;
+import fr.onsiea.ludart.common.modules.processor.LudartModulesDescriptor;
 import fr.onsiea.ludart.common.modules.processor.LudartModulesManager;
+import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -67,20 +69,20 @@ public class ModuleProcessor extends AbstractProcessor
 		var elementUtils = processingEnv.getElementUtils();
 		var typeUtils    = processingEnv.getTypeUtils();
 
-		messager.printMessage(Kind.NOTE, "Module Processor is loaded. Modules detection started.");
 
-		var groupedModulesClasses = collectAll(roundEnv, elementUtils, typeUtils, LudartModulesManager.class, LudartModule.class);
+		var groupedModulesClasses = collectAll(roundEnv, elementUtils, typeUtils, messager, LudartModulesManager.class, LudartModule.class);
 
-		if (groupedModulesClasses.size() == 0)
+		if (groupedModulesClasses == null || groupedModulesClasses.size() == 0)
 		{
 			return true;
 		}
+		messager.printMessage(Kind.NOTE, "Module Processor is loaded. Modules detection started.");
 
 		for (var moduleEntry : groupedModulesClasses.entrySet())
 		{
 			var    modulesSchemasPackageName = moduleEntry.getKey();
 			var    lastDot                   = modulesSchemasPackageName.lastIndexOf('.');
-			String className                 = null;
+			String className                 = modulesSchemasPackageName;
 			if (lastDot > 0)
 			{
 				var lastElement = modulesSchemasPackageName.substring(lastDot + 1);
@@ -106,13 +108,41 @@ public class ModuleProcessor extends AbstractProcessor
 					out.println(";");
 					out.println();
 				}
-				out.println("import fr.onsiea.ludart.common.modules.processor.LudartModulesDescriptor;");
-				out.println("import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;");
+
+				out.println("import " + LudartModulesDescriptor.class.getName() + ";");
+				out.println("import " + ModulesSchemas.class.getName() + ";");
 				out.println();
 
 				for (var moduleClass : modulesClasses)
 				{
+					if (moduleClass == null)
+					{
+						continue;
+					}
+
 					out.println("import " + ((TypeElement) moduleClass).getQualifiedName() + ";");
+
+					var annotation = moduleClass.getAnnotation(LudartModule.class);
+					if (annotation == null)
+					{
+						continue;
+					}
+
+					List<? extends TypeMirror> dependencies = getTypeMirrorFromAnnotationValue(annotation::dependencies);
+					if (dependencies == null || dependencies.size() == 0)
+					{
+						continue;
+					}
+
+					for (var dependency : dependencies)
+					{
+						if (dependency == null)
+						{
+							continue;
+						}
+
+						out.println("import " + dependency + ";");
+					}
 				}
 				out.println();
 
@@ -126,6 +156,11 @@ public class ModuleProcessor extends AbstractProcessor
 				out.println("\t\tfinal var modulesSchemasPackage = schemasBuilderIn.makePackage(\"" + modulesSchemasPackageName + "\", " + modulesClasses.size() + ");");
 				for (var moduleClass : modulesClasses)
 				{
+					if (moduleClass == null)
+					{
+						continue;
+					}
+
 					out.print("\t\tmodulesSchemasPackage.add(");
 					out.print(moduleClass.getSimpleName());
 					out.print(".class, ");
@@ -156,7 +191,12 @@ public class ModuleProcessor extends AbstractProcessor
 							int i = 0;
 							for (var dependency : dependencies)
 							{
-								String dependencyClassName = null;
+								if (dependency == null)
+								{
+									continue;
+								}
+
+								String dependencyClassName;
 
 								if (dependency.getKind().equals(TypeKind.DECLARED))
 								{
@@ -192,14 +232,14 @@ public class ModuleProcessor extends AbstractProcessor
 		return true;
 	}
 
-	private Map<String, List<Element>> collectAll(RoundEnvironment roundEnvIn, Elements elementUtilsIn, Types typeUtilsIn, Class<? extends Annotation>... annotationsIn)
+	private Map<String, List<Element>> collectAll(RoundEnvironment roundEnvIn, Elements elementUtilsIn, Types typeUtilsIn, Messager messagerIn, Class<? extends Annotation>... annotationsIn)
 	{
 		final var groupedModulesClasses = new HashMap<String, List<Element>>();
 		var       packages              = new ArrayList<String>();
 
 		for (var annotation : annotationsIn)
 		{
-			collect(roundEnvIn, annotation, groupedModulesClasses, packages, elementUtilsIn, typeUtilsIn);
+			collect(roundEnvIn, annotation, groupedModulesClasses, packages, elementUtilsIn, typeUtilsIn, messagerIn);
 		}
 
 		packages.clear();
@@ -221,7 +261,7 @@ public class ModuleProcessor extends AbstractProcessor
 		return null;
 	}
 
-	private static void collect(RoundEnvironment roundEnv, Class<? extends Annotation> annotationIn, Map<String, List<Element>> groupedModulesClasses, List<String> packages, Elements elementUtils, Types typeUtils)
+	private static void collect(RoundEnvironment roundEnv, Class<? extends Annotation> annotationIn, Map<String, List<Element>> groupedModulesClasses, List<String> packages, Elements elementUtils, Types typeUtils, Messager messagerIn)
 	{
 		var annotatedElements = roundEnv.getElementsAnnotatedWith(annotationIn);
 		if (annotatedElements == null || annotatedElements.size() == 0)
@@ -248,17 +288,19 @@ public class ModuleProcessor extends AbstractProcessor
 
 			var moduleElement = elementUtils.getModuleOf(clazz);
 
-			String groupName = null;
-			if (moduleElement == null)
+			String groupName;
+			if (moduleElement != null)
 			{
 				groupName = moduleElement.getSimpleName().toString();
+				messagerIn.printMessage(Kind.NOTE, "module-info name : " + groupName);
 			}
 			else
 			{
 				var packageName = elementUtils.getPackageOf(clazz).toString();
 				if (packageName == null)
 				{
-					groupName = clazz.getSimpleName().toString();
+					var className = clazz.getSimpleName().toString();
+					groupName = className.substring(0, 1).toUpperCase() + className.substring(1);
 				}
 				else
 				{

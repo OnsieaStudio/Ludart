@@ -30,28 +30,24 @@
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common.modules.manager;
+package fr.onsiea.ludart.client.window.glfw;
 
-import fr.onsiea.ludart.common.modules.IModule;
-import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
+import fr.onsiea.ludart.client.window.IWindowRenderSystem;
+import fr.onsiea.ludart.client.window.settings.IWindowSettings;
 
-import java.lang.reflect.InvocationTargetException;
+import static org.lwjgl.glfw.GLFW.*;
 
-public interface IModulesManager extends IModule
+public class GLFWOpenGLSystem implements IWindowRenderSystem
 {
-	void initialize();
-
-	void stop();
-
-	interface IFactory
+	@Override
+	public void initialization(long handleIn, IWindowSettings settingsIn)
 	{
-		default String name()
+		glfwMakeContextCurrent(handleIn);
+		if (settingsIn.sync() > 0)
 		{
-			return this.moduleClass().getSimpleName();
+			glfwSwapInterval(settingsIn.sync());
 		}
 
-		Class<? extends IModulesManager> moduleClass();
-
-		IModulesManager create(ModulesSchemas schemasIn) throws InvocationTargetException, InstantiationException, IllegalAccessException;
+		glfwShowWindow(handleIn);
 	}
 }

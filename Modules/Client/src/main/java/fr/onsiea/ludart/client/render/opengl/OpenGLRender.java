@@ -30,28 +30,30 @@
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common.modules.manager;
+package fr.onsiea.ludart.client.render.opengl;
 
-import fr.onsiea.ludart.common.modules.IModule;
-import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
+import fr.onsiea.ludart.client.render.IRenderSystem;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
-import java.lang.reflect.InvocationTargetException;
-
-public interface IModulesManager extends IModule
+public class OpenGLRender implements IRenderSystem
 {
-	void initialize();
-
-	void stop();
-
-	interface IFactory
+	@Override
+	public void initialization()
 	{
-		default String name()
-		{
-			return this.moduleClass().getSimpleName();
-		}
+		GL.createCapabilities();
+	}
 
-		Class<? extends IModulesManager> moduleClass();
+	@Override
+	public void clear()
+	{
+		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+	}
 
-		IModulesManager create(ModulesSchemas schemasIn) throws InvocationTargetException, InstantiationException, IllegalAccessException;
+	@Override
+	public void cleanup()
+	{
+		GL.setCapabilities(null);
 	}
 }

@@ -30,28 +30,17 @@
  * @Organization : Onsiea Studio (https://github.com/OnsieaStudio)
  */
 
-package fr.onsiea.ludart.common.modules.manager;
+package fr.onsiea.ludart.client.window.settings;
 
-import fr.onsiea.ludart.common.modules.IModule;
-import fr.onsiea.ludart.common.modules.schema.ModulesSchemas;
-
-import java.lang.reflect.InvocationTargetException;
-
-public interface IModulesManager extends IModule
+public interface IWindowSettings
 {
-	void initialize();
+	int height();
 
-	void stop();
+	int width();
 
-	interface IFactory
-	{
-		default String name()
-		{
-			return this.moduleClass().getSimpleName();
-		}
+	int refreshRate();
 
-		Class<? extends IModulesManager> moduleClass();
+	String title();
 
-		IModulesManager create(ModulesSchemas schemasIn) throws InvocationTargetException, InstantiationException, IllegalAccessException;
-	}
+	int sync(); // > 0 -> sync enabled
 }

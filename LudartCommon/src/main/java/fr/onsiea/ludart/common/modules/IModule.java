@@ -31,6 +31,7 @@
  */
 package fr.onsiea.ludart.common.modules;
 
+import fr.onsiea.ludart.common.modules.manager.IModulesManager;
 import fr.onsiea.ludart.common.registries.manager.RegistriesManager;
 
 public interface IModule
@@ -41,6 +42,11 @@ public interface IModule
 	}
 
 	boolean isWorking();
+
+	default <T extends IModule> void dependencies(IModulesManager modulesManagerIn, T... dependenciesIn)
+	{
+
+	}
 
 	/**
 	 * Start all child modules, which in turn will stop their child modules and so on
