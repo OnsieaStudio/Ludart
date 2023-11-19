@@ -4,9 +4,16 @@
 
 **In progress, the initial sources will arrive and updates will be regular. For now I'm focusing on the architecture (repo, documentations, maven, gradle, ...)**
 
-# License
+## License
 
-This project is released under the GNU General Public License (GPL) version 3, available at https://www.gnu.org/licenses/gpl-3.0.html and copied into https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE, for more details read https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE
+This project is released under the GNU General Public License (GPL) version 3, available at https://www.gnu.org/licenses/gpl-3.0.html and [copied into](https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE), for more details read https://github.com/OnsieaStudio/Ludart/blob/main/LICENSE
+
+## Branches
+
+feature[temporary]->dev->prerelease->main|maven
+![Ludart - Game framework BRANCHS](https://github.com/OnsieaStudio/Ludart/assets/30376290/7746385b-c7e3-43ee-83aa-bc07f3006ecc)
+
+
 
 ## Contraints
 
@@ -32,7 +39,8 @@ This project is released under the GNU General Public License (GPL) version 3, a
 
 - The packet system simplifies the sending of strictly necessary information, no more, no less, over the network
 
-### 3ᵉ: "optimization" (most games are not sufficiently optimized, although they could be even if it takes a long time. The machine is never used to its full capacity [example: a game using only 'a single core on a processor with 32...], the goal is to make optimizations easy or even automatic)
+### 3ᵉ: "optimization"
+Most games are not sufficiently optimized, although they could be even if it takes a long time. The machine is never used to its full capacity (example: a game using only 'a single core on a processor with 32...), the goal is to make optimizations easy or even automatic)
 
 - Meta-optimization: optimization of the system of modules, which thanks to its architecture allows in turn to optimize certain actions carried out by them.
 
